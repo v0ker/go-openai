@@ -10,9 +10,11 @@ import (
 
 // Image sizes defined by the OpenAI API.
 const (
-	CreateImageSize256x256   = "256x256"
-	CreateImageSize512x512   = "512x512"
+	CreateImageSize256x256   = "256x256" // only for dall-e-2
+	CreateImageSize512x512   = "512x512" // only for dall-e-2
 	CreateImageSize1024x1024 = "1024x1024"
+	CreateImageSize1792x1024 = "1792x1024" // only for dall-e-3
+	CreateImageSize1024x1792 = "1024x1792" // only for dall-e-3
 )
 
 const (
@@ -20,12 +22,25 @@ const (
 	CreateImageResponseFormatB64JSON = "b64_json"
 )
 
+const (
+	CreateImageStyleVivid   = "vivid"
+	CreateImageStyleNatural = "natural"
+)
+
+const (
+	ModelDallE2 = "dall-e-2"
+	ModelDallE3 = "dall-e-3"
+)
+
 // ImageRequest represents the request structure for the image API.
 type ImageRequest struct {
 	Prompt         string `json:"prompt,omitempty"`
+	Model          string `json:"model,omitempty"` // default is "dall-e-2"
 	N              int    `json:"n,omitempty"`
+	Quality        string `json:"quality,omitempty"` // only supported for dall-e-3
 	Size           string `json:"size,omitempty"`
 	ResponseFormat string `json:"response_format,omitempty"`
+	Style          string `json:"style,omitempty"` // only supported for dall-e-3
 	User           string `json:"user,omitempty"`
 }
 
@@ -39,8 +54,9 @@ type ImageResponse struct {
 
 // ImageResponseDataInner represents a response data structure for image API.
 type ImageResponseDataInner struct {
-	URL     string `json:"url,omitempty"`
-	B64JSON string `json:"b64_json,omitempty"`
+	URL           string `json:"url,omitempty"`
+	B64JSON       string `json:"b64_json,omitempty"`
+	RevisedPrompt string `json:"revised_prompt,omitempty"`
 }
 
 // CreateImage - API call to create an image. This is the main endpoint of the DALL-E API.

@@ -24,6 +24,22 @@ func TestImages(t *testing.T) {
 	checks.NoError(t, err, "CreateImage error")
 }
 
+func TestImagesWithDella3(t *testing.T) {
+	client, server, teardown := setupOpenAITestServer()
+	defer teardown()
+	server.RegisterHandler("/v1/images/generations", handleImageEndpoint)
+	v, err := client.CreateImage(context.Background(), ImageRequest{
+		Prompt:         "Lorem ipsum",
+		Model:          ModelDallE3,
+		Style:          CreateImageStyleNatural,
+		Size:           CreateImageSize1024x1792,
+		ResponseFormat: CreateImageResponseFormatURL,
+	})
+	checks.NoError(t, err, "CreateImage error")
+	t.Logf("response: %s", v.Data[0].URL)
+
+}
+
 // handleImageEndpoint Handles the images endpoint by the test server.
 func handleImageEndpoint(w http.ResponseWriter, r *http.Request) {
 	var err error
